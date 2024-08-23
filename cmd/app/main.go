@@ -7,6 +7,6 @@ import (
 
 func main() {
 
-	query.Query()
+	query.FliterJson()
 	fmt.Println("test")
 }

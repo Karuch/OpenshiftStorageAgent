@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func Query() {
+func Query() []byte {
 	// Define variables
 
 	tokenFilePath := "/go/kubernetes/token.txt"
@@ -42,6 +42,7 @@ func Query() {
 	if err != nil {
 		log.Println("Error while reading the response bytes:", err)
 	}
-	log.Println(string([]byte(body)))
+	
+	return body
 
 }
