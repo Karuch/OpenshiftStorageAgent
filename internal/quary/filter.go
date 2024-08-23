@@ -2,8 +2,7 @@ package query
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
+	"github.com/Karuch/OpenshiftStorageAgent/internal/logs"
 )
 
 // Define the structure that matches the JSON
@@ -19,20 +18,26 @@ type Response struct {
 	Items []Item `json:"items"`
 }
 
-func FliterJson() {
+func FliterJson() ([]string, error) {
+
+	queryResult, err := Query()
+	if err != nil {
+		e.LogError(err)
+	}
+
 	// Decode JSON into the Response struct
 	var response Response
-	err := json.Unmarshal(Query(), &response)
+	err = json.Unmarshal(queryResult, &response)
 	if err != nil {
-		log.Fatalf("Error decoding JSON: %v", err)
+		e.LogError(err)
 	}
 
-	all_pvcs := []string{}
+	allPVCs := []string{}
 	// Access and print the name from each item
 	for _, item := range response.Items {
-		fmt.Println("PVC Name:", item.Metadata.Name)
-		all_pvcs = append(all_pvcs, item.Metadata.Name)
+		allPVCs = append(allPVCs, item.Metadata.Name)
 	}
 
-	fmt.Println(all_pvcs)
+	return allPVCs, err
+
 }

@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
-	query.FliterJson()
+	query.GetPVCs()
 	fmt.Println("test")
 }

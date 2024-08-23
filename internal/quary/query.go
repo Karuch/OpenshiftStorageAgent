@@ -4,12 +4,12 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
+	"github.com/Karuch/OpenshiftStorageAgent/internal/logs"
 )
 
-func Query() []byte {
+func Query() ([]byte, error){
 	// Define variables
 
 	tokenFilePath := "/go/kubernetes/token.txt"
@@ -19,7 +19,7 @@ func Query() []byte {
 
 	token, err := os.ReadFile(tokenFilePath)
 	if err != nil {
-		log.Fatal(err)
+		e.LogError(err)
 	}
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
@@ -34,15 +34,20 @@ func Query() []byte {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error on response.\n[ERROR] -", err)
+		e.LogError(err)
 	}
 	defer resp.Body.Close()
 
+	// Check if the response status code is not 200
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("server return unexpected status code: %d", resp.StatusCode)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error while reading the response bytes:", err)
+		e.LogError(err)
 	}
 	
-	return body
+	return body, err
 
 }
