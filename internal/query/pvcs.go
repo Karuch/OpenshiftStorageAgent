@@ -7,7 +7,7 @@ import (
 	"github.com/Karuch/OpenshiftStorageAgent/internal/logs"
 )
 
-func GetPVCs() (map[string]string, error) {
+func GetPVCs() (map[string]int64, error) {
 
 	var ENABLE_ONLY string = os.Getenv("ENABLE_ONLY")
 	var DISABLE_ONLY string = os.Getenv("DISABLE_ONLY")
@@ -70,6 +70,23 @@ func GetPVCs() (map[string]string, error) {
 		fmt.Printf("['%s' %s] ", pvc, storage)
 	}
 
-	return desiredPVCs, err
+	// Create a new map with a capacity hint based on the original map's length
+	CompletePVCs := make(map[string]int64, len(desiredPVCs))
+
+	for pvc, storage := range desiredPVCs {
+		bytes, err := ConvertStorageToBytes(storage)
+		if err != nil {
+			e.LogError(err)
+		}
+		CompletePVCs[pvc] = bytes
+	}
+
+	fmt.Println("")
+	fmt.Println("in bytes:")
+	for pvc, bytes := range CompletePVCs {
+		fmt.Printf("['%s' %s] ", pvc, bytes)
+	}
+
+	return CompletePVCs, err
 
 }
