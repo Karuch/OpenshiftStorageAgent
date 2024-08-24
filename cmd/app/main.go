@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Karuch/OpenshiftStorageAgent/internal/quary"
+	"github.com/Karuch/OpenshiftStorageAgent/internal/query"
 )
 
 func main() {
