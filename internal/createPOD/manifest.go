@@ -3,7 +3,6 @@ package createPOD
 import (
     "bytes"
     "encoding/json"
-    "fmt"
     "github.com/itchyny/gojq"
     "os"
     "text/template"
@@ -24,14 +23,14 @@ func replaceHyphen(s string) string {
     return strings.ReplaceAll(s, "-", "xxHYPHENxxCHARxx")
 }
 
-func GetPodManifest(pvcMap map[string]int64) (string, error) {
+func GetPodManifest(pvcMap map[string]int64) ([]byte, error) {
     var manifestPath string = "/go/kubernetes/agent-pod.json" // Path to your file in the current directory
 
     // Read the JSON file
     jsonData, err := os.ReadFile(manifestPath)
     if err != nil {
         e.LogError(err) // Retain e.LogError for logging
-        return "", err
+        return nil, err
     }
 
     // Unmarshal the JSON data into a map
@@ -39,7 +38,7 @@ func GetPodManifest(pvcMap map[string]int64) (string, error) {
     err = json.Unmarshal(jsonData, &data)
     if err != nil {
         e.LogError(err) // Retain e.LogError for logging
-        return "", err
+        return nil, err
     }
 
     // Define the template for the query string
@@ -73,20 +72,16 @@ func GetPodManifest(pvcMap map[string]int64) (string, error) {
     err = t.Execute(&queryBuffer, pvcMap)
     if err != nil {
         e.LogError(err) // Retain e.LogError for logging
-        return "", err
+        return nil, err
     }
 
     queryStr := queryBuffer.String()
-
-    // Print the generated query for debugging
-    fmt.Println("Generated Query:")
-    fmt.Println(queryStr)
 
     // Parse the generated query
     query, err := gojq.Parse(queryStr)
     if err != nil {
         e.LogError(err) // Retain e.LogError for logging
-        return "", err
+        return nil, err
     }
 
     // Execute the query
@@ -104,7 +99,7 @@ func GetPodManifest(pvcMap map[string]int64) (string, error) {
                 break
             }
             e.LogError(err) // Retain e.LogError for logging
-            return "", err
+            return nil, err
         }
         updatedData = v
     }
@@ -113,8 +108,8 @@ func GetPodManifest(pvcMap map[string]int64) (string, error) {
     updatedJSON, err := json.MarshalIndent(updatedData, "", "  ")
     if err != nil {
         e.LogError(err) // Retain e.LogError for logging
-        return "", err
+        return nil, err
     }
 
-    return string(updatedJSON), err
+    return updatedJSON, err
 }

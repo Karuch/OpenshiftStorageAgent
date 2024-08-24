@@ -16,9 +16,10 @@ func main() {
 		e.LogError(err)
 	}
 
-	podManifest, err := createPOD.GetPodManifest(pvcMap)
+	respone, err := createPOD.Request(pvcMap)
 	if err != nil {
 		e.LogError(err)
 	}
-	fmt.Println(podManifest)
+	
+	fmt.Println(string(respone))
 }
