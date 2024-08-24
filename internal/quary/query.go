@@ -32,12 +32,13 @@ func Query() ([]byte, error){
 
 	// Send req using http Client
 	client := &http.Client{}
+	fmt.Println("waiting to response from:", apiServer)
 	resp, err := client.Do(req)
 	if err != nil {
 		e.LogError(err)
 	}
 	defer resp.Body.Close()
-
+	
 	// Check if the response status code is not 200
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("server return unexpected status code: %d", resp.StatusCode)
