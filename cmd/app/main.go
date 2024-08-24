@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Karuch/OpenshiftStorageAgent/internal/query"
+	"github.com/Karuch/OpenshiftStorageAgent/internal/createPOD"
+	// "github.com/Karuch/OpenshiftStorageAgent/internal/queryPVC"
 )
 
 func main() {
-	query.GetPVCs()
+	// queryPVC.GetPVCs()
 	fmt.Println("test")
+	createPOD.GetPodManifest()
 }
