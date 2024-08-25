@@ -7,17 +7,15 @@ import (
 	"net/http"
 	"os"
 	"github.com/Karuch/OpenshiftStorageAgent/internal/logs"
+	"github.com/Karuch/OpenshiftStorageAgent/internal/global"
 )
 
 func Query() ([]byte, error){
 	// Define variables
 
-	tokenFilePath := "/go/kubernetes/token.txt"
-	apiServer := "https://192.168.49.2:8443"
-	namespace := "default"
-	url := fmt.Sprintf("%s/api/v1/namespaces/%s/persistentvolumeclaims", apiServer, namespace)
+	url := fmt.Sprintf("%s/api/v1/namespaces/%s/persistentvolumeclaims", global.APIServer, global.Namespace)
 
-	token, err := os.ReadFile(tokenFilePath)
+	token, err := os.ReadFile(global.TokenFilePath)
 	if err != nil {
 		e.LogError(err)
 	}
@@ -32,7 +30,7 @@ func Query() ([]byte, error){
 
 	// Send req using http Client
 	client := &http.Client{}
-	fmt.Println("waiting to response from:", apiServer)
+	fmt.Println("waiting to response from:", global.APIServer)
 	resp, err := client.Do(req)
 	if err != nil {
 		e.LogError(err)

@@ -45,17 +45,19 @@ func Request(CompletePVCsMap map[string]int64) ([]byte, error){
 		e.LogError(err)
 	}
 	defer resp.Body.Close()
-
+	// I have no idea why, kubernetes return empty response on failure in this request
 	// Check if the response status code is not 200
 	if resp.StatusCode != 201 && resp.StatusCode != 200 {
 		return nil, fmt.Errorf("server return unexpected status code: %d", resp.StatusCode)
+	} else {
+		fmt.Println("response statuscode of agent-pod creation:", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		e.LogError(err)
 	}
-
+	
 	return body, err
 
 }

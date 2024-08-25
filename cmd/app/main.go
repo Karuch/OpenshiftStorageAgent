@@ -9,17 +9,16 @@ import (
 )
 
 func main() {
-	// queryPVC.GetPVCs()
 	fmt.Println("test")
+
 	pvcMap, err := queryPVC.GetPVCs()
 	if err != nil {
 		e.LogError(err)
 	}
 
-	respone, err := createPOD.Request(pvcMap)
+	_, err = createPOD.Request(pvcMap)
 	if err != nil {
 		e.LogError(err)
 	}
-	
-	fmt.Println(string(respone))
+
 }
